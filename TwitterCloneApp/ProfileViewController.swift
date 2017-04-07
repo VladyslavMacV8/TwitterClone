@@ -38,8 +38,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         User.tempUser = nil
         if userScreenName == nil {
             guard let currentUser = User.currentUser else { return }
-            user = currentUser
-            setupViewController()
+            DispatchQueue.main.async {
+                self.user = currentUser
+                self.setupViewController()
+            }
         } else {
             TwitterClient.sharedInstance?.getUserByScreenname(screenname: userScreenName!, success: { (user) in
                 User.tempUser = user
@@ -56,9 +58,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "ProfileConfigureView"),
                                                object: nil,
                                                queue: OperationQueue.main) { (notification) in
-                                                
-            self.user = User.tempUser
-            self.setupViewController()
+            DispatchQueue.main.async {
+                self.user = User.tempUser
+                self.setupViewController()
+            }
+            
         }
     }
     
@@ -72,7 +76,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         
-        profileImageView.setImageWith(user.profileUrl!)
+        if let profileURL = user.profileUrl {
+            profileImageView.setImageWith(profileURL)
+        }
         profileImageView.clipsToBounds = true
         profileImageView.layer.cornerRadius = 5
         
@@ -131,7 +137,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! TweetCompactCell
         cell.delegate = self
         cell.indexPath = indexPath
-        cell.tweet = tweets?[indexPath.row]
+        if let tweet = tweets?[cell.indexPath.row] {
+            cell.tweet = tweet
+        }
         
         return cell
     }
@@ -146,7 +154,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let tweet = tweets?[indexPath.row]
-            guard let tweetID = tweet?.tweetID.description else { return }
+            guard let tweetID = tweet?.tweetID?.description else { return }
             TwitterClient.sharedInstance?.deleteTweet(tweetId: tweetID, completion: { (tweet, error) in
                 self.reloadData()
             })
@@ -154,7 +162,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func reloadTableCellAtIndex(cell: UITableViewCell, indexPath: IndexPath) {
-        if(reloadedIndexPaths.index(of: indexPath.row) == nil) {
+        if reloadedIndexPaths.index(of: indexPath.row) == nil {
             reloadedIndexPaths.append(indexPath.row)
             DispatchQueue.main.async {
                 self.userTableView.reloadData()
@@ -162,10 +170,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
     }
     
-    func openProfile(userScreenName: String) {
+    func openProfile(_ userScreenName: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! UINavigationController
-        let pVC = vc.viewControllers.first as! ProfileViewController
+        guard let pVC = vc.viewControllers.first as? ProfileViewController else { return }
         pVC.userScreenName = userScreenName
         self.present(vc, animated: true, completion: nil)
     }

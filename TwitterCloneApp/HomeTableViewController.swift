@@ -64,26 +64,31 @@ class HomeTableViewController: UITableViewController, TwitterTableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HomeCell", for: indexPath) as! TweetCompactCell
         cell.delegate = self
         cell.indexPath = indexPath
-        cell.tweet = tweets?[cell.indexPath.row]
+        if let tweet = tweets?[cell.indexPath.row] {
+            cell.tweet = tweet
+        }
         
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let screenName = tweets?[indexPath.row].screenname else { return }
-        openProfile(userScreenName: screenName)
+        openProfile(screenName)
     }
     
     func reloadTableCellAtIndex(cell: UITableViewCell, indexPath: IndexPath) {
-        if(reloadedIndexPaths.index(of: indexPath.row) == nil) {
+        if reloadedIndexPaths.index(of: indexPath.row) == nil {
             reloadedIndexPaths.append(indexPath.row)
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
         }
+        
     }
     
-    func openProfile(userScreenName: String) {
+    
+    
+    func openProfile(_ userScreenName: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
         let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! UINavigationController
         let pVC = vc.viewControllers.first as! ProfileViewController

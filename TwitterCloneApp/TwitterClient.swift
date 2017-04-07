@@ -38,14 +38,15 @@ class TwitterClient: BDBOAuth1SessionManager {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
             }) { (error) in
-                print((error?.localizedDescription)!)
-                self.loginFailure!(error!)
+                if let error = error { print("Fetch request" + error.localizedDescription) }
         }
     }
     
     func handleOpen(url: URL) {
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        appDelegate.splashDelay = true
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.splashDelay = true
+        }
+        
         let requestToken = BDBOAuth1Credential(queryString: url.query)
         
         fetchAccessToken(withPath: "oauth/access_token",
@@ -55,15 +56,13 @@ class TwitterClient: BDBOAuth1SessionManager {
                             
             self.currentAccount({ (user) in
                 User.currentUser = user
-                self.loginSuccess?()
                 self.delegate?.continueLogin()
                 }, failure: { (error) in
-                    self.loginFailure!(error)
+                    print("Current Account" + error.localizedDescription)
             })
             self.loginSuccess?()
             }) { (error) in
-                print((error?.localizedDescription)!)
-                self.loginFailure!(error!)
+                if let error = error { self.loginFailure?(error) }
         }
     }
     
@@ -73,7 +72,6 @@ class TwitterClient: BDBOAuth1SessionManager {
             let user = User(dictionary)
             success(user)
             }) { (task, error) in
-                print(error.localizedDescription as Any)
                 failure(error)
         }
     }
@@ -93,8 +91,8 @@ class TwitterClient: BDBOAuth1SessionManager {
             guard let dictionaries = response as? [[String: AnyObject]] else { return }
             let tweets = TweetModel.tweetsWithArray(dictionaries)
             success(tweets)
-                }) { (task, error) in
-                    failure(error)
+            }) { (task, error) in
+                failure(error)
         }
     }
     
@@ -103,8 +101,8 @@ class TwitterClient: BDBOAuth1SessionManager {
             guard let dictionaries = response as? [[String: AnyObject]] else { return }
             let user = User(dictionaries[0])
             success(user)
-                }) { (task, error) in
-                    failure(error)
+            }) { (task, error) in
+                failure(error)
         }
     }
     
@@ -141,14 +139,14 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func replyToTweet(text: String, replyToTweetID: Int? = 0, success: @escaping (TweetModel) -> ()) {
+    func replyToTweet(text: String, replyToTweetID: Int? = 0, success: @escaping (TweetModel) -> (), failure: @escaping (Error) -> ()) {
         if text == "" { return }
         post("1.1/statuses/update.json", parameters: ["status": text, "in_reply_to_status_id": replyToTweetID!], progress: nil, success: { (task, response) in
             guard let dictionary = response as? [String: AnyObject] else { return }
             let tweet = TweetModel(dictionary)
             success(tweet)
             }) { (task, error) in
-                print(error)
+                failure(error)
         }
     }
     

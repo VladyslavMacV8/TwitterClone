@@ -116,6 +116,8 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
             
             TwitterClient.sharedInstance?.replyToTweet(text: composedText, replyToTweetID: replyToTweet?.tweetID, success: { (tweet) in
                 self.presentViewController()
+            }, failure: {
+                print($0)
             })
         }
     }

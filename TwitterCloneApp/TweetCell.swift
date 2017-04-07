@@ -37,20 +37,33 @@ class TweetCell: UITableViewCell {
         }
     }
     
-    func tweetSetConfigure() {
-        guard let profilePicture = tweet.authorProfilePicURL else { return }
-        profilePictureImageView.setImageWith(profilePicture)
+    override func awakeFromNib() {
+        super.awakeFromNib()
         profilePictureImageView.layer.cornerRadius = 5
         profilePictureImageView.clipsToBounds = true
+        mediaImageView.layer.cornerRadius = 5
+        mediaImageView.clipsToBounds = true
+    }
+    
+    func tweetSetConfigure() {
+        if let profilePicture = tweet.authorProfilePicURL {
+            profilePictureImageView.setImageWith(profilePicture)
+        }
         
         authorNameLabel.text = tweet.author
-        guard let screenName = tweet.screenname else { return }
-        authorScreennameLabel.text = "@" + screenName
-        tweetContentsLabel.text = tweet.text
-        tweetAgeLabel.text = getDate()
         
-        retweetButton.isSelected = tweet.retweeted
-        favoriteButton.isSelected = tweet.favorited
+        if let screenName = tweet.screenname {
+            authorScreennameLabel.text = "@" + screenName
+        }
+        
+        tweetContentsLabel.text = tweet.text
+        
+        getDate()
+        
+        if let retweete = tweet.retweeted, let favorited = tweet.favorited {
+            retweetButton.isSelected = retweete
+            favoriteButton.isSelected = favorited
+        }
         
         getHyperlink()
         
@@ -58,14 +71,18 @@ class TweetCell: UITableViewCell {
         getMediaImage()
     }
     
-    func getDate() -> String {
-        var date = tweet.timestamp
-        let firstBound = date?.index(date!.startIndex, offsetBy: 4)
-        let endBound = date?.index(date!.endIndex, offsetBy: -18)
-        date = date?.substring(from: firstBound!)
-        date = date?.substring(to: endBound!)
-        
-        return date!
+    func getDate() {
+        DispatchQueue.global(qos: .background).async {
+            guard var date = self.tweet.timestamp else { return self.tweetAgeLabel.text = "Unknown date" }
+            let firstBound = date.index(date.startIndex, offsetBy: 4)
+            let endBound = date.index(date.endIndex, offsetBy: -18)
+            date = date.substring(from: firstBound)
+            date = date.substring(to: endBound)
+            
+            DispatchQueue.main.async {
+                self.tweetAgeLabel.text = date
+            }
+        }
     }
     
     func getHyperlink() {
@@ -119,8 +136,6 @@ class TweetCell: UITableViewCell {
                         if heightMediaImage != nil {
                             heightMediaImage.isActive = false
                         }
-                        mediaImageView.layer.cornerRadius = 5
-                        mediaImageView.clipsToBounds = true
                         
                         mediaImageView.setImageWith(URLRequest(url:URL(string: mediaurl)!),
                                                     placeholderImage: nil,
@@ -166,7 +181,7 @@ class TweetCell: UITableViewCell {
     
     @IBAction func replyButtonAction(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ComposeViewController") as! ComposeViewController
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ComposeViewController") as? ComposeViewController else { return }
         vc.replyToTweet = tweet
         delegate!.openCompose(vc)
     }

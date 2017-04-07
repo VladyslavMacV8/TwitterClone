@@ -9,7 +9,7 @@
 import Foundation
 
 class TweetModel {
-    var tweetID: Int!
+    var tweetID: Int?
     var screenname: String?
     var author: String?
     var authorProfilePicURL: URL?
@@ -20,9 +20,9 @@ class TweetModel {
     var retweetsCount: Int = 0
     var favoritesCount: Int = 0
     
-    var favorited: Bool {
+    var favorited: Bool? {
         didSet {
-            if favorited {
+            if favorited! {
                 TwitterClient.sharedInstance?.favorite(params: ["id": tweetID as AnyObject],
                                                        favorite: true,
                                                        completion: { (tweet, error) in })
@@ -36,9 +36,9 @@ class TweetModel {
         }
     }
     
-    var retweeted: Bool {
+    var retweeted: Bool? {
         didSet {
-            if retweeted {
+            if retweeted! {
                 TwitterClient.sharedInstance?.retweet(params: ["id": tweetID as AnyObject],
                                                       retweet: true,
                                                       completion: { (tweet, error) in })
@@ -53,18 +53,22 @@ class TweetModel {
     }
     
     init(_ dictionary: [String: AnyObject]) {
-        tweetID = dictionary["id"] as! Int
-        screenname = dictionary["user"]!["screen_name"] as? String
-        author = dictionary["user"]!["name"] as? String
-        authorProfilePicURL = URL(string: dictionary["user"]!["profile_image_url_https"] as! String)
-        text = dictionary["text"] as? String
-        retweetsCount = (dictionary["retweet_count"] as? Int) ?? 0
-        favoritesCount = (dictionary["favorite_count"] as? Int) ?? 0
+        retrieveDataFrom(dictionary)
+    }
+    
+    private func retrieveDataFrom(_ dictionary: [String: AnyObject]) {
+        tweetID = dictionary["id"] as? Int ?? 0
+        screenname = dictionary["user"]!["screen_name"] as? String ?? ""
+        author = dictionary["user"]!["name"] as? String ?? ""
+        authorProfilePicURL = URL(string: dictionary["user"]!["profile_image_url_https"] as? String ?? "")
+        text = dictionary["text"] as? String ?? ""
+        retweetsCount = dictionary["retweet_count"] as? Int ?? 0
+        favoritesCount = dictionary["favorite_count"] as? Int ?? 0
         retweeted = (dictionary["retweeted"] as? Bool) ?? false
         favorited = (dictionary["favorited"] as? Bool) ?? false
-        timestamp = dictionary["created_at"] as? String
-        urls = dictionary["entities"]?["urls"] as? [[String: AnyObject]]
-        media = dictionary["entities"]?["media"] as? [[String: AnyObject]]
+        timestamp = dictionary["created_at"] as? String ?? ""
+        urls = dictionary["entities"]?["urls"] as? [[String: AnyObject]] ?? []
+        media = dictionary["entities"]?["media"] as? [[String: AnyObject]] ?? []
     }
     
     class func tweetsWithArray(_ dictionaries: [[String: AnyObject]]) -> [TweetModel] {

@@ -23,19 +23,24 @@ class SearchTableViewCell: UITableViewCell {
         }
     }
     
-    func newUserSetConfigure() {
-        guard let photoURL = newUser.photoURL else { return }
-        photoImageView.setImageWith(photoURL)
+    override func awakeFromNib() {
+        super.awakeFromNib()
         photoImageView.layer.cornerRadius = 5
         photoImageView.clipsToBounds = true
+        followButton.layer.cornerRadius = 5
+        followButton.clipsToBounds = true
+    }
+    
+    func newUserSetConfigure() {
+        if let photoURL = newUser.photoURL {
+            photoImageView.setImageWith(photoURL)
+        }
         
         nameLabel.text = newUser.name
         
-        guard let screenName = newUser.screenName else { return }
-        screenNameLabel.text = "@" + screenName
-        
-        followButton.layer.cornerRadius = 5
-        followButton.clipsToBounds = true
+        if let screenName = newUser.screenName {
+            screenNameLabel.text = "@" + screenName
+        }
         
         updateFollowing()
     }

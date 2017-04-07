@@ -124,7 +124,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     
     func presentViewController() {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! UINavigationController
+        let vc = storyboard.instantiateViewController(withIdentifier: "TabProfileViewController") as! UITabBarController
         self.present(vc, animated: true, completion: nil)
     }
 

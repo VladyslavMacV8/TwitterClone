@@ -12,6 +12,7 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var splashDelay = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -44,4 +45,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         TwitterClient.sharedInstance?.handleOpen(url: url)
         return true
     }    
+}
+
+func delay(_ seconds: Double, completion: @escaping ()->Void) {
+    let popTime = DispatchTime.now() + Double(Int64( Double(NSEC_PER_SEC) * seconds )) / Double(NSEC_PER_SEC)
+    DispatchQueue.main.asyncAfter(deadline: popTime, execute: completion)
 }

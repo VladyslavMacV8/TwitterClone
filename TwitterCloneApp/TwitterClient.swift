@@ -18,10 +18,9 @@ class TwitterClient: BDBOAuth1SessionManager {
     private var loginSuccess: (()->())?
     private var loginFailure: ((Error)->())?
     
-    var user: User?
+    weak var delegate: TwitterLoginDelegate?
     
     func login(success: @escaping ()->(), failure: @escaping (Error)->()) {
-        
         loginSuccess = success
         loginFailure = failure
         
@@ -38,13 +37,16 @@ class TwitterClient: BDBOAuth1SessionManager {
             if let url = URL(string: "https://api.twitter.com/oauth/authenticate?oauth_token=" + token) {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-                            
             }) { (error) in
                 if let error = error { print("Fetch request" + error.localizedDescription) }
         }
     }
     
     func handleOpen(url: URL) {
+        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+            appDelegate.splashDelay = true
+        }
+        
         let requestToken = BDBOAuth1Credential(queryString: url.query)
         
         fetchAccessToken(withPath: "oauth/access_token",
@@ -53,7 +55,8 @@ class TwitterClient: BDBOAuth1SessionManager {
                          success: { (accessToken) in
                             
             self.currentAccount({ (user) in
-                self.user = user
+                User.currentUser = user
+                self.delegate?.continueLogin()
                 }, failure: { (error) in
                     print("Current Account" + error.localizedDescription)
             })
@@ -73,7 +76,7 @@ class TwitterClient: BDBOAuth1SessionManager {
         }
     }
     
-    func homeTimeline(_ success: @escaping ([TweetModel]) -> (), failure: @escaping (Error) -> ()) {
+    func homeTimeline(success: @escaping ([TweetModel]) -> (), failure: @escaping (Error) -> ()) {
         get("1.1/statuses/home_timeline.json", parameters: ["count": 30], progress: nil, success: { (task, response) in
             guard let dictionaries = response as? [[String: AnyObject]] else { return }
             let tweets = TweetModel.tweetsWithArray(dictionaries)
@@ -176,9 +179,10 @@ class TwitterClient: BDBOAuth1SessionManager {
                 completion(nil, error)
         }
     }
-
+    
     func logout() {
+        User.currentUser = nil
         deauthorize()
-        user = nil
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: User.userDidLogoutNotification), object: nil)
     }
 }

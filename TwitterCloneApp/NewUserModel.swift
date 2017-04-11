@@ -8,15 +8,16 @@
 
 import Foundation
 
-class NewUserModel: User {
-    
+class NewUserModel {
+    var name: String?
+    var screenName: String?
+    var photoURL: URL?
     var following: Bool?
     
-    override init(_ dictionary: [String: AnyObject]) {
-        super.init(dictionary)
+    init(_ dictionary: [String: AnyObject]) {
         name = dictionary["name"] as? String ?? ""
         screenName = dictionary["screen_name"] as? String ?? ""
-        profileUrl = URL(string: dictionary["profile_image_url_https"] as? String ?? "")
+        photoURL = URL(string: dictionary["profile_image_url_https"] as? String ?? "")
         following = dictionary["following"] as? Bool ?? false
     }
     

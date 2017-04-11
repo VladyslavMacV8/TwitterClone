@@ -41,7 +41,7 @@ class HomeTableViewController: UITableViewController, TwitterTableViewDelegate {
     }
     
     func reloadData() {
-        TwitterClient.sharedInstance?.homeTimeline({ (tweets) in
+        TwitterClient.sharedInstance?.homeTimeline(success: { (tweets) in
             DispatchQueue.main.async {
                 self.tweets = tweets
                 self.tableView.reloadData()
@@ -53,7 +53,11 @@ class HomeTableViewController: UITableViewController, TwitterTableViewDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tweets == nil ? 0 : tweets!.count
+        if tweets == nil {
+            return 0
+        } else {
+            return tweets!.count
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -63,6 +67,7 @@ class HomeTableViewController: UITableViewController, TwitterTableViewDelegate {
         if let tweet = tweets?[cell.indexPath.row] {
             cell.tweet = tweet
         }
+        
         return cell
     }
     
@@ -75,18 +80,20 @@ class HomeTableViewController: UITableViewController, TwitterTableViewDelegate {
         if reloadedIndexPaths.index(of: indexPath.row) == nil {
             reloadedIndexPaths.append(indexPath.row)
             DispatchQueue.main.async {
-                self.tableView.reloadRows(at: [indexPath], with: .none)
+                self.tableView.reloadData()
             }
         }
+        
     }
+    
+    
     
     func openProfile(_ userScreenName: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        if let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as? UINavigationController,
-            let pVC = vc.viewControllers.first as? ProfileViewController {
-            pVC.userScreenName = userScreenName
-            self.present(vc, animated: true, completion: nil)
-        }
+        let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! UINavigationController
+        let pVC = vc.viewControllers.first as! ProfileViewController
+        pVC.userScreenName = userScreenName
+        self.present(vc, animated: true, completion: nil)
     }
     
     func openCompose(_ viewController: UIViewController) {

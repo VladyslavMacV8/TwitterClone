@@ -28,11 +28,8 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     }
     
     func setupConfiguration() {
-        guard let user = TwitterClient.sharedInstance?.user else { return }
-        
-        if let url = user.profileUrl {
-            photoImageView.setImageWith(url)
-        }
+        guard let profileURL = User.currentUser?.profileUrl else { return }
+        photoImageView.setImageWith(profileURL)
         photoImageView.layer.cornerRadius = 5
         photoImageView.clipsToBounds = true
         
@@ -40,9 +37,9 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         tweetTextView.layer.cornerRadius = 5
         tweetTextView.clipsToBounds = true
         
-        nameLabel.text = user.name
+        nameLabel.text = User.currentUser?.name
         
-        guard let screenName = user.screenName else { return }
+        guard let screenName = User.currentUser?.screenname else { return }
         screenNameLabel.text = "@" + screenName
         
         countCharacterLabel.text = "140"
@@ -115,10 +112,8 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
                 self.presentViewController()
             })
         } else {
-            if let screenName = replyToTweet?.screenname {
-                composedText = "@" + screenName + ":" + composedText
-            }
-                
+            composedText = "@" + (replyToTweet?.screenname)! + ":" + composedText
+            
             TwitterClient.sharedInstance?.replyToTweet(text: composedText, replyToTweetID: replyToTweet?.tweetID, success: { (tweet) in
                 self.presentViewController()
             }, failure: {
@@ -129,9 +124,8 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     
     func presentViewController() {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        if let vc = storyboard.instantiateViewController(withIdentifier: "TabViewController") as? UITabBarController {
-            self.present(vc, animated: true, completion: nil)
-        }
+        let vc = storyboard.instantiateViewController(withIdentifier: "TabProfileViewController") as! UITabBarController
+        self.present(vc, animated: true, completion: nil)
     }
 
 }

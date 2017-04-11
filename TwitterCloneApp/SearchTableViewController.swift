@@ -24,18 +24,14 @@ class SearchTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         TwitterClient.sharedInstance?.currentAccount({ (user) in
-            User.currentUser = user
+            TwitterClient.sharedInstance?.user = user
         }, failure: { (error) in
             print(error)
         })
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if newUsers == nil {
-            return 0
-        } else {
-            return (newUsers?.count)!
-        }
+        return newUsers == nil ? 0 : newUsers!.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -44,7 +40,6 @@ class SearchTableViewController: UITableViewController, UITextFieldDelegate {
             self.reloadData()
         }
         cell.newUser = self.newUsers?[indexPath.row]
-        
         return cell
     }
     

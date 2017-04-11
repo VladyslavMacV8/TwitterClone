@@ -32,8 +32,8 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     func newUserSetConfigure() {
-        if let photoURL = newUser.photoURL {
-            photoImageView.setImageWith(photoURL)
+        if let profileUrl = newUser.profileUrl {
+            photoImageView.setImageWith(profileUrl)
         }
         
         nameLabel.text = newUser.name
@@ -54,7 +54,8 @@ class SearchTableViewCell: UITableViewCell {
     }
     
     @IBAction func followButtonAction(_ sender: UIButton) {
-        TwitterClient.sharedInstance?.followNewUser(screenName: newUser.screenName!, completion: { (newFollowUser, error) in })
+        guard let screenName = newUser.screenName else { return }
+        TwitterClient.sharedInstance?.followNewUser(screenName: screenName, completion: { (newFollowUser, error) in })
         buttonTap?()
         followButton.isHidden = true
     }

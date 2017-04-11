@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="RVb-iE-df4">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -11,45 +11,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Zero View Controller-->
-        <scene sceneID="x9Q-2K-oFe">
-            <objects>
-                <viewController storyboardIdentifier="MainViewController" id="RVb-iE-df4" customClass="ZeroViewController" customModule="TwitterCloneApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="fdk-FL-Dnv"/>
-                        <viewControllerLayoutGuide type="bottom" id="SxR-VK-nTT"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="AFu-HJ-hCE">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo-Twitter-1" translatesAutoresizingMaskIntoConstraints="NO" id="Ygn-1S-sG1">
-                                <rect key="frame" x="112" y="258" width="150" height="150"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="nQU-nV-0tJ"/>
-                                    <constraint firstAttribute="height" constant="150" id="s6w-dZ-U4t"/>
-                                </constraints>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" red="0.0" green="0.62857240438461304" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="Ygn-1S-sG1" firstAttribute="centerY" secondItem="AFu-HJ-hCE" secondAttribute="centerY" id="M2w-R6-dcy"/>
-                            <constraint firstItem="Ygn-1S-sG1" firstAttribute="centerX" secondItem="AFu-HJ-hCE" secondAttribute="centerX" id="zdo-s9-Oct"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <segue destination="BYZ-38-t0r" kind="presentation" identifier="toLog" id="4nq-0M-HOA"/>
-                        <segue destination="Bl2-Rf-xIZ" kind="presentation" identifier="toHome" id="qbv-7R-pKn"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kle-da-574" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-281" y="-234"/>
-        </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="TwitterCloneApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="LogInViewController" id="BYZ-38-t0r" customClass="ViewController" customModule="TwitterCloneApp" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -86,11 +51,12 @@
                     </view>
                     <connections>
                         <outlet property="logInButton" destination="MPj-fL-Yek" id="ohI-Is-1Qe"/>
+                        <segue destination="Bl2-Rf-xIZ" kind="presentation" identifier="toHome" id="lPm-we-4u0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-282" y="657"/>
+            <point key="canvasLocation" x="-314" y="-234"/>
         </scene>
         <!--Home Table View Controller-->
         <scene sceneID="1g5-hR-Uq4">
@@ -456,13 +422,13 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="b4u-wr-yW8">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="100"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="1B9-EG-ChE"/>
+                                    <constraint firstAttribute="height" constant="80" id="1B9-EG-ChE"/>
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zWO-d5-82n">
-                                <rect key="frame" x="0.0" y="100" width="375" height="125"/>
+                                <rect key="frame" x="0.0" y="80" width="375" height="125"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="T54-hq-cOB">
                                         <rect key="frame" x="8" y="8" width="75" height="75"/>
@@ -569,14 +535,14 @@
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ht6-4s-lbA">
-                                <rect key="frame" x="0.0" y="225" width="375" height="10"/>
+                                <rect key="frame" x="0.0" y="205" width="375" height="10"/>
                                 <color key="backgroundColor" red="0.0" green="0.62857240439999995" blue="1" alpha="0.71457619863013699" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="10" id="SOd-Nz-4UJ"/>
                                 </constraints>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="121" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0ex-uw-RO8">
-                                <rect key="frame" x="0.0" y="234" width="375" height="384"/>
+                                <rect key="frame" x="0.0" y="214" width="375" height="404"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="HomeCell" rowHeight="121" id="11j-GZ-ldI" customClass="TweetCompactCell" customModule="TwitterCloneApp" customModuleProvider="target">
@@ -905,7 +871,7 @@
         <!--Tab Bar Controller-->
         <scene sceneID="1Ht-Rr-nJ8">
             <objects>
-                <tabBarController storyboardIdentifier="TabProfileViewController" automaticallyAdjustsScrollViewInsets="NO" id="Bl2-Rf-xIZ" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabViewController" automaticallyAdjustsScrollViewInsets="NO" id="Bl2-Rf-xIZ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="oU5-nb-Jdb">
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>

@@ -21,7 +21,7 @@ class ViewController: UIViewController {
     
     @IBAction func connection(_ sender: UIButton) {
         TwitterClient.sharedInstance?.login(success: {
-            self.dismiss(animated: true, completion: nil)
+                self.performSegue(withIdentifier: "toHome", sender: self)
             }, failure: { (error) in
                 print(error.localizedDescription)
         })

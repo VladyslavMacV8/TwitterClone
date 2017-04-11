@@ -30,22 +30,21 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewDidLoad()
         
         setupRefreshControl()
-        setupObserver()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        User.tempUser = nil
         if userScreenName == nil {
-            guard let currentUser = User.currentUser else { return }
             DispatchQueue.main.async {
-                self.user = currentUser
+                self.user = TwitterClient.sharedInstance?.user
                 self.setupViewController()
             }
         } else {
             TwitterClient.sharedInstance?.getUserByScreenname(screenname: userScreenName!, success: { (user) in
-                User.tempUser = user
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "ProfileConfigureView"), object: nil)
+                DispatchQueue.main.async {
+                    self.user = user
+                    self.setupViewController()
+                }
             }, failure: { (error) in })
         }
     }
@@ -54,21 +53,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         return .lightContent
     }
     
-    func setupObserver() {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: "ProfileConfigureView"),
-                                               object: nil,
-                                               queue: OperationQueue.main) { (notification) in
-            DispatchQueue.main.async {
-                self.user = User.tempUser
-                self.setupViewController()
-            }
-            
-        }
-    }
-    
     func setupViewController() {
-        if let backgorundImageUrl = user.backgroundImageURL {
-            backgroundImageView.setImageWith(URL(string: backgorundImageUrl)!)
+        if let backgorundImageUrl = user.backgroundImageURL,
+            let url = URL(string: backgorundImageUrl) {
+            backgroundImageView.setImageWith(url)
             if user.usingBannerImage != true {
                 backgroundImageView.contentMode = .scaleAspectFill
             } else {
@@ -84,15 +72,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         nameLabel.text = user.name
         
-        screenNameLabel.text = "@" + user.screenname!
-        
+        if let screenName = user.screenName {
+            screenNameLabel.text = "@" + screenName
+        }
+            
         followersCountLabel.text = user.followersCount?.description
         followingCountLabel.text = user.followingCount?.description
         
         closeButton.layer.cornerRadius = closeButton.frame.height / 4
         closeButton.clipsToBounds = true
         
-        if user.screenname != User.currentUser?.screenname {
+        if user.screenName != TwitterClient.sharedInstance?.user?.screenName {
             logOutButton.isHidden = true
             closeButton.isHidden = false
         } else {
@@ -126,11 +116,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tweets == nil {
-            return 0
-        } else {
-            return tweets!.count
-        }
+        return tweets == nil ? 0 : tweets!.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -165,17 +151,18 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         if reloadedIndexPaths.index(of: indexPath.row) == nil {
             reloadedIndexPaths.append(indexPath.row)
             DispatchQueue.main.async {
-                self.userTableView.reloadData()
+                self.userTableView.reloadRows(at: [indexPath], with: .none)
             }
         }
     }
     
     func openProfile(_ userScreenName: String) {
         let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-        let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as! UINavigationController
-        guard let pVC = vc.viewControllers.first as? ProfileViewController else { return }
-        pVC.userScreenName = userScreenName
-        self.present(vc, animated: true, completion: nil)
+        if let vc = storyboard.instantiateViewController(withIdentifier: "ProfileViewController") as? UINavigationController,
+            let pVC = vc.viewControllers.first as? ProfileViewController {
+                pVC.userScreenName = userScreenName
+                self.present(vc, animated: true, completion: nil)
+        }
     }
     
     func openCompose(_ viewController: UIViewController) {
@@ -189,8 +176,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let logOutActionButton = UIAlertAction(title: "Log Out", style: .destructive) { (action) in
             TwitterClient.sharedInstance?.logout()
             let storyboard = UIStoryboard(name: "Main", bundle: Bundle.main)
-            let vc = storyboard.instantiateViewController(withIdentifier: "MainViewController") as! ZeroViewController
-            self.present(vc, animated: true, completion: nil)
+            if let vc = storyboard.instantiateViewController(withIdentifier: "LogInViewController") as? ViewController {
+                self.present(vc, animated: true, completion: nil)
+            }
         }
         actionSheetController.addAction(logOutActionButton)
         self.present(actionSheetController, animated: true, completion: nil)

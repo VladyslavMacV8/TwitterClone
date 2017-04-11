@@ -29,6 +29,7 @@ class TweetCell: UITableViewCell {
     var favoriteBool = false
     
     weak var delegate: TwitterTableViewDelegate?
+    
     var indexPath: IndexPath!
     
     var tweet: TweetModel! {
@@ -127,7 +128,7 @@ class TweetCell: UITableViewCell {
     func getMediaImage() {
         if let media = tweet.media {
             for medium in media {
-                let urltext = medium["url"] as! String
+                guard let urltext = medium["url"] as? String else { return }
                 tweetContentsLabel.text = tweetContentsLabel.text?.replacingOccurrences(of: urltext, with: "")
                 if (medium["type"] as? String) == "photo" {
                     if let mediaurl = medium["media_url"] as? String {
@@ -137,7 +138,9 @@ class TweetCell: UITableViewCell {
                             heightMediaImage.isActive = false
                         }
                         
-                        mediaImageView.setImageWith(URLRequest(url:URL(string: mediaurl)!),
+                        guard let url = URL(string: mediaurl) else { return }
+                        
+                        mediaImageView.setImageWith(URLRequest(url: url),
                                                     placeholderImage: nil,
                                                     success: { (request, response, image) -> Void in
                             self.mediaImageView.image = image
@@ -158,24 +161,42 @@ class TweetCell: UITableViewCell {
     @IBAction func reTweetAction(_ sender: UIButton) {
         if reTweetBool {
             reTweetBool = false
-            tweet.retweeted = false
-            retweetCountLabel.text = String(tweet.retweetsCount)
+            TwitterClient.sharedInstance?.retweet(params: ["id": tweet.tweetID as AnyObject],
+                                                  retweet: false,
+                                                  completion: { (_, _) in
+                self.tweet.retweetsCount -= 1
+                self.retweetCountLabel.text = self.tweet.retweetsCount.description
+            })
         } else {
             reTweetBool = true
-            tweet.retweeted = true
-            retweetCountLabel.text = String(tweet.retweetsCount)
+            TwitterClient.sharedInstance?.retweet(params: ["id": tweet.tweetID as AnyObject],
+                                                  retweet: true,
+                                                  completion: { (_, _) in
+                self.tweet.retweetsCount += 1
+                self.retweetCountLabel.text = self.tweet.retweetsCount.description
+            })
+            
         }
     }
     
     @IBAction func favoriteAction(_ sender: UIButton) {
         if favoriteBool {
             favoriteBool = false
-            tweet.favorited = false
-            favoriteCountLabel.text = String(tweet.favoritesCount)
+            TwitterClient.sharedInstance?.favorite(params: ["id": tweet.tweetID as AnyObject],
+                                                   favorite: false,
+                                                   completion: { (_, _) in
+                self.tweet.favoritesCount -= 1
+                self.favoriteCountLabel.text = self.tweet.favoritesCount.description
+            })
+            
         } else {
             favoriteBool = true
-            tweet.favorited = true
-            favoriteCountLabel.text = String(tweet.favoritesCount)
+            TwitterClient.sharedInstance?.favorite(params: ["id": tweet.tweetID as AnyObject],
+                                                   favorite: true,
+                                                   completion: { (_, _) in
+                self.tweet.favoritesCount += 1
+                self.favoriteCountLabel.text = self.tweet.favoritesCount.description
+            })
         }
     }
     
@@ -183,6 +204,6 @@ class TweetCell: UITableViewCell {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         guard let vc = storyboard.instantiateViewController(withIdentifier: "ComposeViewController") as? ComposeViewController else { return }
         vc.replyToTweet = tweet
-        delegate!.openCompose(vc)
+        delegate?.openCompose(vc)
     }
 }

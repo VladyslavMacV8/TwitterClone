@@ -14,8 +14,6 @@
 		6C5AD56F1E9386E6002CCBCA /* SearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C5AD56E1E9386E6002CCBCA /* SearchTableViewCell.swift */; };
 		6C8EDC701E8BA93100FA1A00 /* TwitterClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC6F1E8BA93100FA1A00 /* TwitterClient.swift */; };
 		6C8EDC721E8BB1BC00FA1A00 /* UseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC711E8BB1BC00FA1A00 /* UseModel.swift */; };
-		6C8EDC741E8BB56200FA1A00 /* TwitterLoginDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC731E8BB56200FA1A00 /* TwitterLoginDelegate.swift */; };
-		6C8EDC781E8BC72400FA1A00 /* ZeroViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC771E8BC72400FA1A00 /* ZeroViewController.swift */; };
 		6C8EDC7D1E8BE88600FA1A00 /* TweetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC7B1E8BE88600FA1A00 /* TweetCell.swift */; };
 		6C8EDC7E1E8BE88600FA1A00 /* TweetCompactCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC7C1E8BE88600FA1A00 /* TweetCompactCell.swift */; };
 		6C8EDC801E8BEB2900FA1A00 /* TweetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C8EDC7F1E8BEB2900FA1A00 /* TweetModel.swift */; };
@@ -38,8 +36,6 @@
 		6C5AD56E1E9386E6002CCBCA /* SearchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		6C8EDC6F1E8BA93100FA1A00 /* TwitterClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterClient.swift; sourceTree = "<group>"; };
 		6C8EDC711E8BB1BC00FA1A00 /* UseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UseModel.swift; sourceTree = "<group>"; };
-		6C8EDC731E8BB56200FA1A00 /* TwitterLoginDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TwitterLoginDelegate.swift; sourceTree = "<group>"; };
-		6C8EDC771E8BC72400FA1A00 /* ZeroViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZeroViewController.swift; sourceTree = "<group>"; };
 		6C8EDC7B1E8BE88600FA1A00 /* TweetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetCell.swift; sourceTree = "<group>"; };
 		6C8EDC7C1E8BE88600FA1A00 /* TweetCompactCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetCompactCell.swift; sourceTree = "<group>"; };
 		6C8EDC7F1E8BEB2900FA1A00 /* TweetModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetModel.swift; sourceTree = "<group>"; };
@@ -81,7 +77,6 @@
 		6C50E8D01E8E3FB200209325 /* Delegate */ = {
 			isa = PBXGroup;
 			children = (
-				6C8EDC731E8BB56200FA1A00 /* TwitterLoginDelegate.swift */,
 				6CD5B2FC1E8D0C8400D561A2 /* TwitterTableViewDelegate.swift */,
 			);
 			name = Delegate;
@@ -108,7 +103,6 @@
 		6C50E8D31E8E3FE600209325 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				6C8EDC771E8BC72400FA1A00 /* ZeroViewController.swift */,
 				6C959F5F1E8A893B00D11E5C /* ViewController.swift */,
 				6C8EDC811E8BF37100FA1A00 /* HomeTableViewController.swift */,
 				6C50E8D41E8E44DB00209325 /* ProfileViewController.swift */,
@@ -304,12 +298,10 @@
 				6C11B3C71E9253BF00AD067A /* ComposeViewController.swift in Sources */,
 				6C8EDC721E8BB1BC00FA1A00 /* UseModel.swift in Sources */,
 				6C50E8D51E8E44DB00209325 /* ProfileViewController.swift in Sources */,
-				6C8EDC741E8BB56200FA1A00 /* TwitterLoginDelegate.swift in Sources */,
 				6C5AD56D1E937E8B002CCBCA /* NewUserModel.swift in Sources */,
 				6C959F601E8A893B00D11E5C /* ViewController.swift in Sources */,
 				6C8EDC801E8BEB2900FA1A00 /* TweetModel.swift in Sources */,
 				6C5AD56F1E9386E6002CCBCA /* SearchTableViewCell.swift in Sources */,
-				6C8EDC781E8BC72400FA1A00 /* ZeroViewController.swift in Sources */,
 				6C959F5E1E8A893B00D11E5C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -437,6 +429,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = FW5YV3C8HR;
 				INFOPLIST_FILE = TwitterCloneApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MyCompany.TwitterCloneApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -454,6 +447,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = FW5YV3C8HR;
 				INFOPLIST_FILE = TwitterCloneApp/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = MyCompany.TwitterCloneApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";

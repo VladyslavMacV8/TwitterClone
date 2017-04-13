@@ -20,6 +20,7 @@ class ViewController: UIViewController {
     }
     
     @IBAction func connection(_ sender: UIButton) {
+        logInButton.isHidden = true
         TwitterClient.sharedInstance?.login(success: {
                 self.performSegue(withIdentifier: "toHome", sender: self)
             }, failure: { (error) in

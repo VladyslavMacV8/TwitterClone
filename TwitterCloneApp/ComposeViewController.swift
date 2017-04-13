@@ -20,8 +20,9 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var closeButton: UIButton!
     @IBOutlet weak var sendButton: UIButton!
     
-    var replyToTweet: TweetModel?
+    var replyToTweet: TweetModel!
     var user: User!
+    let realmViewModel = RealmViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,10 +31,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     }
     
     func setupConfiguration() {
-        do {
-            let realm = try Realm()
-            self.user = realm.objects(User.self).first!
-        } catch { print("User error") }
+        user = realmViewModel.getCurrentUser()
         
         if let url = URL(string: user.profileUrl) {
             photoImageView.setImageWith(url)

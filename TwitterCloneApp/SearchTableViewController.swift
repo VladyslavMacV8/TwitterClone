@@ -14,6 +14,7 @@ class SearchTableViewController: UITableViewController, UITextFieldDelegate {
     @IBOutlet weak var searchTextField: UITextField!
 
     var newUsers: [NewUserModel]?
+    let realmViewModel = RealmViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,14 +26,7 @@ class SearchTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         TwitterClient.sharedInstance?.currentAccount({ (user) in
-            do {
-                let realm = try Realm()
-                try realm.write {
-                    realm.add(user, update: true)
-                }
-            } catch {
-                print("not update")
-            }
+            self.realmViewModel.setCurrentUser(user: user)
         }, failure: { (error) in
             print(error)
         })

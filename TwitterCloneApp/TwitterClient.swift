@@ -19,6 +19,8 @@ class TwitterClient: BDBOAuth1SessionManager {
     private var loginSuccess: (()->())?
     private var loginFailure: ((Error)->())?
     
+    let realmViewModel = RealmViewModel()
+    
     func login(success: @escaping ()->(), failure: @escaping (Error)->()) {
         
         loginSuccess = success
@@ -52,14 +54,11 @@ class TwitterClient: BDBOAuth1SessionManager {
                          success: { (accessToken) in
                             
             self.currentAccount({ (user) in
-                do {
-                    let realm = try Realm()
-                    try realm.write {
-                        realm.add(user, update: true)
-                    }
-                } catch {
-                    print("Not user")
-                }
+                self.realmViewModel.setCurrentUser(user: user)
+                let userDefaults = UserDefaults.standard
+                userDefaults.set(user.id, forKey: "id")
+                userDefaults.synchronize()
+                
                 }, failure: { (error) in
                     print("Current Account" + error.localizedDescription)
             })
@@ -187,13 +186,9 @@ class TwitterClient: BDBOAuth1SessionManager {
 
     func logout() {
         deauthorize()
-        do {
-            let realm = try Realm()
-            try realm.write {
-                realm.deleteAll()
-            }
-        } catch {
-            print("Not deinit")
+        realmViewModel.deleteCurrentUser()
+        if let appDomain = Bundle.main.bundleIdentifier {
+            UserDefaults.standard.removePersistentDomain(forName: appDomain)
         }
     }
 }

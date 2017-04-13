@@ -13,8 +13,6 @@ class User: Object {
  
     var dictionary: [String: AnyObject] = [:]
     
-    dynamic var current = 0
-    
     dynamic var id: Int = 0
     dynamic var name: String = ""
     dynamic var screenName: String = ""
@@ -54,6 +52,6 @@ class User: Object {
     }
     
     override static func primaryKey() -> String? {
-        return "current"
+        return "id"
     }
 }

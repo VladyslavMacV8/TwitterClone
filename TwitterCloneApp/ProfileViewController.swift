@@ -26,6 +26,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     var refreshControl: UIRefreshControl!
     var tweets: [TweetModel]?
     var reloadedIndexPaths = [Int]()
+    let realmViewModel = RealmViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,10 +38,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewWillAppear(animated)
         if userScreenName == nil {
             DispatchQueue.main.async {
-                do {
-                    let realm = try Realm()
-                    self.user = realm.objects(User.self).last
-                } catch { print("User error") }
+                self.user = self.realmViewModel.getCurrentUser()
                 self.setupViewController()
             }
         } else {
@@ -84,18 +82,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         closeButton.layer.cornerRadius = closeButton.frame.height / 4
         closeButton.clipsToBounds = true
         
-        do {
-            let realm = try Realm()
-            let user = realm.objects(User.self).last
-        
-            if self.user.screenName != user?.screenName {
-                logOutButton.isHidden = true
-                closeButton.isHidden = false
-            } else {
-                logOutButton.isHidden = false
-                closeButton.isHidden = true
-            }
-        } catch { print("User error") }
+        if self.user.screenName != realmViewModel.getCurrentUser().screenName {
+            logOutButton.isHidden = true
+            closeButton.isHidden = false
+        } else {
+            logOutButton.isHidden = false
+            closeButton.isHidden = true
+        }
         
         userTableView.delegate = self
         userTableView.dataSource = self

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ComposeViewController: UIViewController, UITextViewDelegate {
 
@@ -20,6 +21,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     @IBOutlet weak var sendButton: UIButton!
     
     var replyToTweet: TweetModel?
+    var user: User!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,9 +30,12 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     }
     
     func setupConfiguration() {
-        guard let user = TwitterClient.sharedInstance?.user else { return }
+        do {
+            let realm = try Realm()
+            self.user = realm.objects(User.self).first!
+        } catch { print("User error") }
         
-        if let url = user.profileUrl {
+        if let url = URL(string: user.profileUrl) {
             photoImageView.setImageWith(url)
         }
         photoImageView.layer.cornerRadius = 5
@@ -42,8 +47,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         
         nameLabel.text = user.name
         
-        guard let screenName = user.screenName else { return }
-        screenNameLabel.text = "@" + screenName
+        screenNameLabel.text = "@" + user.screenName
         
         countCharacterLabel.text = "140"
         

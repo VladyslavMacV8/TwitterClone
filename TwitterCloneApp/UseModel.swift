@@ -7,20 +7,25 @@
 //
 
 import Foundation
+import RealmSwift
 
-class User {
+class User: Object {
  
-    var dictionary: [String: AnyObject]?
-    var id: Int?
-    var name: String?
-    var screenName: String?
-    var profileUrl: URL?
-    var backgroundImageURL: String?
-    var usingBannerImage = true
-    var followersCount: Int?
-    var followingCount: Int?
+    var dictionary: [String: AnyObject] = [:]
     
-    init(_ dictionary: [String: AnyObject]) {
+    dynamic var current = 0
+    
+    dynamic var id: Int = 0
+    dynamic var name: String = ""
+    dynamic var screenName: String = ""
+    dynamic var profileUrl: String = ""
+    dynamic var backgroundImageURL: String?
+    dynamic var usingBannerImage = true
+    dynamic var followersCount: Int = 0
+    dynamic var followingCount: Int = 0
+    
+    convenience init(_ dictionary: [String: AnyObject]) {
+        self.init()
         self.dictionary = dictionary
         retrieveDataFrom(dictionary)
     }
@@ -38,10 +43,17 @@ class User {
             usingBannerImage = false
         }
         
-        let profileUrlString = dictionary["profile_image_url_https"] as? String ?? ""
-        profileUrl = URL(string: profileUrlString)
+        profileUrl = dictionary["profile_image_url_https"] as? String ?? ""
         
         followersCount = dictionary["followers_count"] as? Int ?? 0
         followingCount = dictionary["friends_count"] as? Int ?? 0
+    }
+    
+    override static func ignoredProperties() -> [String] {
+        return ["dictionary"]
+    }
+    
+    override static func primaryKey() -> String? {
+        return "current"
     }
 }

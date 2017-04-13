@@ -8,6 +8,7 @@
 
 import Foundation
 import BDBOAuth1Manager
+import RealmSwift
 
 class TwitterClient: BDBOAuth1SessionManager {
     
@@ -17,8 +18,6 @@ class TwitterClient: BDBOAuth1SessionManager {
     
     private var loginSuccess: (()->())?
     private var loginFailure: ((Error)->())?
-    
-    var user: User?
     
     func login(success: @escaping ()->(), failure: @escaping (Error)->()) {
         
@@ -53,11 +52,20 @@ class TwitterClient: BDBOAuth1SessionManager {
                          success: { (accessToken) in
                             
             self.currentAccount({ (user) in
-                self.user = user
+                do {
+                    let realm = try Realm()
+                    try realm.write {
+                        realm.add(user, update: true)
+                    }
+                } catch {
+                    print("Not user")
+                }
                 }, failure: { (error) in
                     print("Current Account" + error.localizedDescription)
             })
+                            
             self.loginSuccess?()
+                            
             }) { (error) in
                 if let error = error { self.loginFailure?(error) }
         }
@@ -179,6 +187,13 @@ class TwitterClient: BDBOAuth1SessionManager {
 
     func logout() {
         deauthorize()
-        user = nil
+        do {
+            let realm = try Realm()
+            try realm.write {
+                realm.deleteAll()
+            }
+        } catch {
+            print("Not deinit")
+        }
     }
 }

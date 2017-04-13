@@ -12,11 +12,11 @@ class NewUserModel: User {
     
     var following: Bool?
     
-    override init(_ dictionary: [String: AnyObject]) {
-        super.init(dictionary)
+    convenience init(_ dictionary: [String: AnyObject]) {
+        self.init()
         name = dictionary["name"] as? String ?? ""
         screenName = dictionary["screen_name"] as? String ?? ""
-        profileUrl = URL(string: dictionary["profile_image_url_https"] as? String ?? "")
+        profileUrl = dictionary["profile_image_url_https"] as? String ?? ""
         following = dictionary["following"] as? Bool ?? false
     }
     

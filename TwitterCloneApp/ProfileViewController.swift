@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, TwitterTableViewDelegate {
 
@@ -36,7 +37,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         super.viewWillAppear(animated)
         if userScreenName == nil {
             DispatchQueue.main.async {
-                self.user = TwitterClient.sharedInstance?.user
+                do {
+                    let realm = try Realm()
+                    self.user = realm.objects(User.self).last
+                } catch { print("User error") }
                 self.setupViewController()
             }
         } else {
@@ -64,7 +68,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         }
         
-        if let profileURL = user.profileUrl {
+        if let profileURL = URL(string: user.profileUrl) {
             profileImageView.setImageWith(profileURL)
         }
         profileImageView.clipsToBounds = true
@@ -72,23 +76,26 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         nameLabel.text = user.name
         
-        if let screenName = user.screenName {
-            screenNameLabel.text = "@" + screenName
-        }
-            
-        followersCountLabel.text = user.followersCount?.description
-        followingCountLabel.text = user.followingCount?.description
+        screenNameLabel.text = "@" + user.screenName
+        
+        followersCountLabel.text = user.followersCount.description
+        followingCountLabel.text = user.followingCount.description
         
         closeButton.layer.cornerRadius = closeButton.frame.height / 4
         closeButton.clipsToBounds = true
         
-        if user.screenName != TwitterClient.sharedInstance?.user?.screenName {
-            logOutButton.isHidden = true
-            closeButton.isHidden = false
-        } else {
-            logOutButton.isHidden = false
-            closeButton.isHidden = true
-        }
+        do {
+            let realm = try Realm()
+            let user = realm.objects(User.self).last
+        
+            if self.user.screenName != user?.screenName {
+                logOutButton.isHidden = true
+                closeButton.isHidden = false
+            } else {
+                logOutButton.isHidden = false
+                closeButton.isHidden = true
+            }
+        } catch { print("User error") }
         
         userTableView.delegate = self
         userTableView.dataSource = self

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class SearchTableViewController: UITableViewController, UITextFieldDelegate {
     
@@ -24,7 +25,14 @@ class SearchTableViewController: UITableViewController, UITextFieldDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         TwitterClient.sharedInstance?.currentAccount({ (user) in
-            TwitterClient.sharedInstance?.user = user
+            do {
+                let realm = try Realm()
+                try realm.write {
+                    realm.add(user, update: true)
+                }
+            } catch {
+                print("not update")
+            }
         }, failure: { (error) in
             print(error)
         })

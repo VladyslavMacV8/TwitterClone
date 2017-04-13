@@ -7,5 +7,6 @@ target 'TwitterCloneApp' do
  
   pod 'BDBOAuth1Manager'
   pod 'AFNetworking'  
+  pod 'RealmSwift'
 
 end

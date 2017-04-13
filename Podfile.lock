@@ -16,15 +16,23 @@ PODS:
     - AFNetworking/NSURLSession
   - BDBOAuth1Manager (2.0.0):
     - AFNetworking/NSURLSession (~> 3.0.0)
+  - Realm (2.5.1):
+    - Realm/Headers (= 2.5.1)
+  - Realm/Headers (2.5.1)
+  - RealmSwift (2.5.1):
+    - Realm (= 2.5.1)
 
 DEPENDENCIES:
   - AFNetworking
   - BDBOAuth1Manager
+  - RealmSwift
 
 SPEC CHECKSUMS:
   AFNetworking: a0075feb321559dc78d9d85b55d11caa19eabb93
   BDBOAuth1Manager: 92d17d06f8a648602962304cd2f35ae7394fa001
+  Realm: 32f86104d37c8521f864d4274050b38ba6190733
+  RealmSwift: f719e7511c902b8908593e8f143f59e47931bdb6
 
-PODFILE CHECKSUM: be20266fadc1d3b076b0935a70bf2348b5a63a8e
+PODFILE CHECKSUM: b303071424cbe8d2404f59a375a074047a723422
 
 COCOAPODS: 1.2.0
